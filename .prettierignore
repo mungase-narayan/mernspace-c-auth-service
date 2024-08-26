@@ -1,0 +1,3 @@
+#ingnore artifacts:
+build
+coverage
