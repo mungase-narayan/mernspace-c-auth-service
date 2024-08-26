@@ -7,5 +7,9 @@
     "dev": "node src/server.ts"
   },
   "author": "Narayan M <narayanmungase03@gmail.com>",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "typescript": "^5.5.4"
+  }
 }
