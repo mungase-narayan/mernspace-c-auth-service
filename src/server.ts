@@ -1,6 +1,3 @@
-function login(username: string): boolean {
-  // Simulate user authentication
-  return true;
-}
+import { Config } from "./config";
 
-login("username");
+console.log("PORT: ", Config.PORT);
