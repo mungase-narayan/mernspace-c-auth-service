@@ -2,6 +2,7 @@ import app from "./app";
 import logger from "./config/logger";
 import { Config } from "./config";
 
+
 const startServer = async () => {
   const port = Config.PORT || 5500;
 
