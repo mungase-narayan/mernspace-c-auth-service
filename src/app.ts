@@ -1,7 +1,9 @@
+import "reflect-metadata";
+
 import express, { NextFunction, Request, Response } from "express";
 import logger from "./config/logger";
 import { HttpError } from "http-errors";
-import authRouter from "./routes/auth"
+import authRouter from "./routes/auth";
 
 const app = express();
 
@@ -9,7 +11,7 @@ app.get("/", async (req, res) => {
   res.send("welcome to fudo apllication");
 });
 
-app.use("/auth", authRouter); 
+app.use("/auth", authRouter);
 
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
   logger.error(err.message);
