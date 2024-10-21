@@ -9,11 +9,11 @@ const startServer = async () => {
   try {
     AppDataSource.initialize()
       .then(() => {
-        console.log("Data Source has been initialized!");
+        logger.info("Database connected successfully!");
         // start the app
       })
       .catch((err) => {
-        console.error("Error during Data Source initialization:", err);
+        console.error("Error during Database connection", err);
       });
     app.listen(port, () => {
       logger.info(`Server is running on port ${port}`);

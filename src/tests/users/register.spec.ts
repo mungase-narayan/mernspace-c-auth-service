@@ -8,16 +8,22 @@ import { User } from "../../entity/User";
 describe("POST /auth/register", () => {
   let connection: DataSource;
   beforeAll(async () => {
-    connection = await AppDataSource.initialize();
+    try {
+      connection = await AppDataSource.initialize();
+    } catch (error) {
+      console.error("Error during Database connection", error);
+      throw error;
+    }
   });
 
   beforeEach(async () => {
-    //Database truncate
     await cruncateTable(connection);
   });
 
   afterAll(async () => {
-    await connection.destroy();
+    if (connection) {
+      await connection.destroy();
+    }
   });
 
   describe("Given all fields", () => {
@@ -98,11 +104,11 @@ describe("POST /auth/register", () => {
 
       // Act
       const response = await request(app as any)
-       .post("/auth/register")
-       .send(userData);
+        .post("/auth/register")
+        .send(userData);
 
       // Assert
-      // expect(response.body.id).toBeGreaterThan(0); response.body.id => undefined;
+      expect(response.body).toHaveProperty("id");
     });
   });
   describe("Fields are missing", () => {});

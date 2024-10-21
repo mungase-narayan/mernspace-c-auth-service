@@ -1,6 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
-@Entity({ name: "users" })
+@Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -11,11 +11,23 @@ export class User {
   @Column()
   lastName: string;
 
-  @Column({ unique: true })
+  @Column()
   email: string;
 
   @Column()
   password: string;
 
-  // Add other fields as needed
+  constructor(
+    id: number,
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+  ) {
+    this.id = id;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.email = email;
+    this.password = password;
+  }
 }

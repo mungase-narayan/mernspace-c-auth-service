@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 
 app.get("/", async (req, res) => {
-  res.send("welcome to fudo apllication");
+  res.json({ message: "welcome to fudo apllication" });
 });
 
 app.use("/auth", authRouter);
