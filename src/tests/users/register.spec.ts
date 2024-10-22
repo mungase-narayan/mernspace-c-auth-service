@@ -5,6 +5,7 @@ import { AppDataSource } from "../../config/data-source";
 import { cruncateTable } from "../utils";
 import { User } from "../../entity/User";
 import { Roles } from "../../constants";
+import exp from "constants";
 
 describe("POST /auth/register", () => {
   let connection: DataSource;
@@ -132,6 +133,29 @@ describe("POST /auth/register", () => {
       const users = await userRepository.find();
       expect(users[0]).toHaveProperty("role");
       expect(users[0].role).toBe(Roles.CUSTOMER);
+    });
+
+    it("Should store the hashed password in the database", async () => {
+      // Arrange
+      const userData = {
+        firstName: "Narayan",
+        lastName: "Mungase",
+        email: "test@example.com",
+        password: "password123",
+      };
+
+      // Act
+      await request(app as any)
+        .post("/auth/register")
+        .send(userData);
+
+      // Assert
+      const userRepository = await connection.getRepository(User);
+      const users = await userRepository.find();
+      console.log("hashPassword: ", users[0].password);
+      expect(users[0].password).not.toBe(userData.password);
+      expect(users[0].password).toHaveLength(60);
+      expect(users[0].password).toMatch(/^\$2b\$\d+\$/);
     });
   });
   describe("Fields are missing", () => {});
