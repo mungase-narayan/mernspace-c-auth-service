@@ -3,6 +3,7 @@ import { RegisterUser } from "../types";
 import { UserService } from "../services/UserServices";
 import { Repository } from "typeorm";
 import { User } from "../entity/User";
+import { validationResult } from "express-validator";
 
 export class AuthController {
   constructor(
@@ -11,8 +12,17 @@ export class AuthController {
   ) {}
 
   async register(req: RegisterUser, res: Response, next: NextFunction) {
-    const { role, firstName, lastName, email, password } = req.body;
+    //Validations
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+      return res.status(400).json({ errors: result.array() });
+    }
 
+    const { role, firstName, lastName, email, password } = req.body;
+    if (!email || !firstName || !lastName || !password) {
+      res.status(400).json({ Error: "All fields are required" });
+      return;
+    }
     const user = await this.userRepository.findOne({
       where: { email: email },
     });
