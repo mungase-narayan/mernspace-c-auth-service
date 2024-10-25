@@ -1,6 +1,7 @@
 import { Request } from "express";
 
 export interface UserData {
+  role: string;
   firstName: string;
   lastName: string;
   email: string;

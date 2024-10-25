@@ -2,10 +2,8 @@ import request from "supertest";
 import app from "../../app";
 import { DataSource } from "typeorm";
 import { AppDataSource } from "../../config/data-source";
-import { cruncateTable } from "../utils";
 import { User } from "../../entity/User";
 import { Roles } from "../../constants";
-import exp from "constants";
 
 describe("POST /auth/register", () => {
   let connection: DataSource;
@@ -35,11 +33,11 @@ describe("POST /auth/register", () => {
 
       // Arrange
       const userData = {
+        role: "customer",
         firstName: "Narayan",
         lastName: "Mungase",
-        email: "test@example.com",
-        password: "password123",
-        confirmPassword: "password123",
+        email: "mungase@gmail.com",
+        password: "Mungase1234",
       };
 
       // Act
@@ -54,11 +52,11 @@ describe("POST /auth/register", () => {
     it("should return valid json response", async () => {
       // Arrange
       const userData = {
+        role: "customer",
         firstName: "Narayan",
         lastName: "Mungase",
-        email: "test@example.com",
-        password: "password123",
-        confirmPassword: "password123",
+        email: "mungase@gmail.com",
+        password: "Mungase1234",
       };
 
       // Act
@@ -75,10 +73,11 @@ describe("POST /auth/register", () => {
     it("Should persist the user in the database", async () => {
       // Arrange
       const userData = {
+        role: "customer",
         firstName: "Narayan",
         lastName: "Mungase",
-        email: "test@example.com",
-        password: "password123",
+        email: "mungase@gmail.com",
+        password: "Mungase1234",
       };
 
       // Act
@@ -89,6 +88,7 @@ describe("POST /auth/register", () => {
       // Assert
       const userRepository = await connection.getRepository(User);
       const users = await userRepository.find();
+      console.log("users", users);
       expect(users).toHaveLength(1);
       expect(users[0].firstName).toBe(userData.firstName);
       expect(users[0].lastName).toBe(userData.lastName);
@@ -98,10 +98,11 @@ describe("POST /auth/register", () => {
     it("Should return an id of the created user", async () => {
       // Arrange
       const userData = {
+        role: "customer",
         firstName: "Narayan",
         lastName: "Mungase",
-        email: "test@example.com",
-        password: "password123",
+        email: "mungase@gmail.com",
+        password: "Mungase1234",
       };
 
       // Act
@@ -131,6 +132,7 @@ describe("POST /auth/register", () => {
       // Assert
       const userRepository = await connection.getRepository(User);
       const users = await userRepository.find();
+      console.log("users from role test", users);
       expect(users[0]).toHaveProperty("role");
       expect(users[0].role).toBe(Roles.CUSTOMER);
     });
@@ -138,10 +140,11 @@ describe("POST /auth/register", () => {
     it("Should store the hashed password in the database", async () => {
       // Arrange
       const userData = {
+        role: "customer",
         firstName: "Narayan",
         lastName: "Mungase",
-        email: "test@example.com",
-        password: "password123",
+        email: "mungase@gmail.com",
+        password: "Mungase1234",
       };
 
       // Act
