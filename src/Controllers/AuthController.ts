@@ -1,16 +1,25 @@
 import { NextFunction, Response } from "express";
 import { RegisterUser } from "../types";
 import { UserService } from "../services/UserServices";
-import { Logger } from "winston";
+import { Repository } from "typeorm";
+import { User } from "../entity/User";
 
 export class AuthController {
   constructor(
     private userService: UserService,
-    private logger: Logger,
+    private userRepository: Repository<User>,
   ) {}
 
   async register(req: RegisterUser, res: Response, next: NextFunction) {
     const { role, firstName, lastName, email, password } = req.body;
+
+    const user = await this.userRepository.findOne({
+      where: { email: email },
+    });
+    if (user) {
+      res.status(400).json({ Error: "Email is already registered" });
+      return;
+    }
     try {
       const user = await this.userService.create({
         role,

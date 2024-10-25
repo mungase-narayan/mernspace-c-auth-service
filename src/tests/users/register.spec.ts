@@ -4,6 +4,7 @@ import { DataSource } from "typeorm";
 import { AppDataSource } from "../../config/data-source";
 import { User } from "../../entity/User";
 import { Roles } from "../../constants";
+import exp from "constants";
 
 describe("POST /auth/register", () => {
   let connection: DataSource;
@@ -29,8 +30,6 @@ describe("POST /auth/register", () => {
 
   describe("Given all fields", () => {
     it("should return the 201 status code", async () => {
-      // AAA => 1.Arrange 2.Act 3.Assert
-
       // Arrange
       const userData = {
         role: "customer",
@@ -88,7 +87,6 @@ describe("POST /auth/register", () => {
       // Assert
       const userRepository = await connection.getRepository(User);
       const users = await userRepository.find();
-      console.log("users", users);
       expect(users).toHaveLength(1);
       expect(users[0].firstName).toBe(userData.firstName);
       expect(users[0].lastName).toBe(userData.lastName);
@@ -125,14 +123,13 @@ describe("POST /auth/register", () => {
       };
 
       // Act
-      const response = await request(app as any)
+      await request(app as any)
         .post("/auth/register")
         .send(userData);
 
       // Assert
       const userRepository = await connection.getRepository(User);
       const users = await userRepository.find();
-      console.log("users from role test", users);
       expect(users[0]).toHaveProperty("role");
       expect(users[0].role).toBe(Roles.CUSTOMER);
     });
@@ -143,7 +140,7 @@ describe("POST /auth/register", () => {
         role: "customer",
         firstName: "Narayan",
         lastName: "Mungase",
-        email: "mungase@gmail.com",
+        email: "hariprasadmungase04@gmail.com",
         password: "Mungase1234",
       };
 
@@ -155,10 +152,33 @@ describe("POST /auth/register", () => {
       // Assert
       const userRepository = await connection.getRepository(User);
       const users = await userRepository.find();
-      console.log("hashPassword: ", users[0].password);
       expect(users[0].password).not.toBe(userData.password);
       expect(users[0].password).toHaveLength(60);
       expect(users[0].password).toMatch(/^\$2b\$\d+\$/);
+    });
+
+    it("Should return 400 status code if email is already exists", async () => {
+      // Arrange
+      const userData = {
+        role: "customer",
+        firstName: "Narayan",
+        lastName: "Mungase",
+        email: "hariprasadmungase04@gmail.com",
+        password: "Mungase1234",
+      };
+
+      const userRepository = connection.getRepository(User);
+      await userRepository.save(userData);
+
+      // Act
+      const response = await request(app as any)
+        .post("/auth/register")
+        .send(userData);
+
+      // Assert
+      const users = await userRepository.find();
+      expect(response.statusCode).toBe(400);
+      expect(users).toHaveLength(1);
     });
   });
   describe("Fields are missing", () => {});

@@ -35,6 +35,7 @@ export class UserService {
 
       // Save the user in the repository
     } catch (err) {
+      console.log("Error saving user", err);
       throw createHttpError(500, "Failed to save user in repository");
     }
   }
