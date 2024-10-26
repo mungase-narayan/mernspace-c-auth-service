@@ -19,7 +19,7 @@ export class AuthController {
     }
 
     const { role, firstName, lastName, email, password } = req.body;
-    if (!email || !firstName || !lastName || !password) {
+    if (!email || !firstName || !lastName || !password || !role) {
       res.status(400).json({ Error: "All fields are required" });
       return;
     }
