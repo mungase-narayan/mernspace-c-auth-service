@@ -4,6 +4,7 @@ import { DataSource } from "typeorm";
 import { AppDataSource } from "../../config/data-source";
 import { User } from "../../entity/User";
 import { Roles } from "../../constants";
+import { isJwt } from "../utils";
 
 describe("POST /auth/register", () => {
   let connection: DataSource;
@@ -212,13 +213,14 @@ describe("POST /auth/register", () => {
           refreshToken = cookie.split(";")[0].split("=")[1];
         }
       });
+      expect(accessToken).not.toBeNull();
+      expect(refreshToken).not.toBeNull();
 
-      console.log("Access token", accessToken);
-      console.log("Refresh token", refreshToken);
-      if (accessToken && refreshToken) {
-        expect(accessToken).not.toBeNull();
-        expect(refreshToken).not.toBeNull();
-      }
+      expect(isJwt(accessToken)).toBeTruthy();
+      expect(isJwt(refreshToken)).toBeTruthy();
+
+      console.log("Access token: ", accessToken);
+      console.log("Refresh token: ", refreshToken);
     });
   });
 

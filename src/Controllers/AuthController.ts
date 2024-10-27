@@ -1,9 +1,16 @@
+import fs from "fs";
+import path from "path";
+
+import { JwtPayload, sign } from "jsonwebtoken";
 import { NextFunction, Response } from "express";
+import { Repository } from "typeorm";
+import { validationResult } from "express-validator";
+
 import { RegisterUser } from "../types";
 import { UserService } from "../services/UserServices";
-import { Repository } from "typeorm";
 import { User } from "../entity/User";
-import { validationResult } from "express-validator";
+import { Config } from "../config";
+import createHttpError from "http-errors";
 
 export class AuthController {
   constructor(
@@ -37,6 +44,43 @@ export class AuthController {
         lastName,
         email,
         password,
+      });
+      // Generate JWT tokens
+      const payload: JwtPayload = { sub: String(user.id), role: user.role };
+      let privateKey: Buffer;
+      try {
+        privateKey = fs.readFileSync(
+          path.join(__dirname, "../../certs/private.pem"),
+        );
+      } catch (err) {
+        const error = createHttpError(500, "Error while reading private key");
+        next(error);
+        return;
+      }
+
+      const accessToken = sign(payload, privateKey, {
+        algorithm: "RS256",
+        expiresIn: "1h",
+        issuer: "auth_service",
+      });
+      const refreshToken = sign(payload, Config.RESPONSE_TOKEN_SECRET!, {
+        algorithm: "HS256",
+        expiresIn: "1y",
+        issuer: "auth_service",
+      });
+
+      res.cookie("accessToken", accessToken, {
+        domain: "localhost",
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60, //1hrs
+        httpOnly: true, //Very Important
+      });
+
+      res.cookie("refreshToken", refreshToken, {
+        domain: "localhost",
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60 * 24 * 365, //1Year
+        httpOnly: true, //Very Important
       });
       res
         .status(201)
