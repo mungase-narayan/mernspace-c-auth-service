@@ -1,21 +1,18 @@
-import fs from "fs";
-import path from "path";
-
-import { JwtPayload, sign } from "jsonwebtoken";
+import { JwtPayload } from "jsonwebtoken";
 import { NextFunction, Response } from "express";
 import { Repository } from "typeorm";
 import { validationResult } from "express-validator";
 
 import { RegisterUser } from "../types";
 import { UserService } from "../services/UserServices";
+import { TokenServices } from "../services/TokenServices";
 import { User } from "../entity/User";
-import { Config } from "../config";
-import createHttpError from "http-errors";
 
 export class AuthController {
   constructor(
     private userService: UserService,
     private userRepository: Repository<User>,
+    private tokenService: TokenServices,
   ) {}
 
   async register(req: RegisterUser, res: Response, next: NextFunction) {
@@ -47,26 +44,15 @@ export class AuthController {
       });
       // Generate JWT tokens
       const payload: JwtPayload = { sub: String(user.id), role: user.role };
-      let privateKey: Buffer;
-      try {
-        privateKey = fs.readFileSync(
-          path.join(__dirname, "../../certs/private.pem"),
-        );
-      } catch (err) {
-        const error = createHttpError(500, "Error while reading private key");
-        next(error);
-        return;
-      }
 
-      const accessToken = sign(payload, privateKey, {
-        algorithm: "RS256",
-        expiresIn: "1h",
-        issuer: "auth_service",
-      });
-      const refreshToken = sign(payload, Config.RESPONSE_TOKEN_SECRET!, {
-        algorithm: "HS256",
-        expiresIn: "1y",
-        issuer: "auth_service",
+      const accessToken = this.tokenService.generateAccessToken(payload);
+
+      //Persist the refresh token
+      const newRefreshToken = await this.tokenService.persistRefreshToken(user);
+
+      const refreshToken = this.tokenService.generateRefreshToken({
+        ...payload,
+        id: String(newRefreshToken.id),
       });
 
       res.cookie("accessToken", accessToken, {
@@ -87,6 +73,7 @@ export class AuthController {
         .json({ id: user.id, message: "User registration successfully" });
     } catch (error) {
       next(error);
+      console.log(error);
       return;
     }
   }
