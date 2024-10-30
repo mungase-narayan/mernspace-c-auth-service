@@ -1,6 +1,7 @@
 import request from "supertest";
-import app from "../../app";
 import { DataSource } from "typeorm";
+
+import app from "../../app";
 import { AppDataSource } from "../../config/data-source";
 import { User } from "../../entity/User";
 import { Roles } from "../../constants";
