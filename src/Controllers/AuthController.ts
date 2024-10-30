@@ -1,13 +1,10 @@
 import { JwtPayload } from "jsonwebtoken";
 import { NextFunction, Response } from "express";
-import { Repository } from "typeorm";
 import { validationResult } from "express-validator";
-import bcrypt from "bcrypt";
 
 import { RegisterUser } from "../types";
 import { UserService } from "../services/UserServices";
 import { TokenServices } from "../services/TokenServices";
-import { User } from "../entity/User";
 import createHttpError from "http-errors";
 import { CredentialService } from "../services/CredentialService";
 import logger from "../config/logger";
@@ -15,7 +12,6 @@ import logger from "../config/logger";
 export class AuthController {
   constructor(
     private userService: UserService,
-    private userRepository: Repository<User>,
     private tokenService: TokenServices,
     private credentialService: CredentialService,
   ) {}

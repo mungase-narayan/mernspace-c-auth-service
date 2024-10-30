@@ -21,7 +21,6 @@ const userService = new UserService(userRepository);
 
 const authController = new AuthController(
   userService,
-  userRepository,
   tokenService,
   credentialService,
 );
