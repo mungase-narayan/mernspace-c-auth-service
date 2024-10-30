@@ -6,18 +6,24 @@ import { User } from "../entity/User";
 import registerValidator from "../validators/register-validator";
 import { TokenServices } from "../services/TokenServices";
 import { RefreshToken } from "../entity/RefreshToken";
+import loginValidator from "../validators/login-validator";
+import { CredentialService } from "../services/CredentialService";
 
 const router = express.Router();
 
-const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
-const tokenService = new TokenServices(refreshTokenRepository);
 const userRepository = AppDataSource.getRepository(User);
+const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
+
+const credentialService = new CredentialService();
+
+const tokenService = new TokenServices(refreshTokenRepository);
 const userService = new UserService(userRepository);
 
 const authController = new AuthController(
   userService,
   userRepository,
   tokenService,
+  credentialService,
 );
 
 router.post(
@@ -25,6 +31,13 @@ router.post(
   registerValidator,
   (req: Request, res: Response, next: NextFunction) =>
     authController.register(req, res, next),
+);
+
+router.post(
+  "/login",
+  loginValidator,
+  (req: Request, res: Response, next: NextFunction) =>
+    authController.login(req, res, next),
 );
 
 export default router;
