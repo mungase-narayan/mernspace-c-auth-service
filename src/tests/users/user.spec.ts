@@ -1,11 +1,19 @@
 import { DataSource } from "typeorm";
+import request from "supertest";
+import createJWKSMock from "mock-jwks";
+
 import { AppDataSource } from "../../config/data-source";
+import { User } from "../../entity/User";
+import { Roles } from "../../constants";
+import app from "../../app";
 
 describe("GET /auth/self", () => {
   let connection: DataSource;
+  let jwks: ReturnType<typeof createJWKSMock>;
 
   beforeAll(async () => {
     try {
+      jwks = createJWKSMock("http://localhost:5501");
       connection = await AppDataSource.initialize();
     } catch (error) {
       console.error("Error during Database connection for test", error);
@@ -14,8 +22,13 @@ describe("GET /auth/self", () => {
   });
 
   beforeEach(async () => {
+    jwks.start();
     await connection.dropDatabase();
     await connection.synchronize();
+  });
+
+  afterEach(async () => {
+    jwks.stop();
   });
 
   afterAll(async () => {
@@ -26,7 +39,38 @@ describe("GET /auth/self", () => {
 
   describe("Given all fields", () => {
     it("Should return the 200 status code", async () => {
-      
+      const accessToken = jwks.token({ sub: "1", role: Roles.CUSTOMER });
+
+      const response = await request(app as any)
+        .get("/auth/self")
+        .set("Cookie", [`accessToken=${accessToken}`])
+        .send();
+
+      expect(response.statusCode).toBe(200);
+    });
+
+    it("Should return the user data", async () => {
+      const userData = {
+        firstName: "Narayan",
+        lastName: "Mungase",
+        email: "example@gmail.com",
+        password: "Mungase1234",
+        role: "customer",
+      };
+      const userRepository = connection.getRepository(User);
+      const data = await userRepository.save(userData);
+
+      //Generate token
+      const accessToken = jwks.token({ sub: String(data.id), role: data.role });
+
+      //Add token to cookie
+      const response = await request(app as any)
+        .get("/auth/self")
+        .set("Cookie", [`accessToken=${accessToken}`])
+        .send();
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.user.id).toBe(data.id);
     });
   });
 });

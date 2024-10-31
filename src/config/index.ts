@@ -12,6 +12,7 @@ const {
   DB_NAME,
   ACCESS_TOKEN_SECRET,
   RESPONSE_TOKEN_SECRET,
+  JWKS_URI,
 } = process.env;
 
 export const Config = {
@@ -24,4 +25,5 @@ export const Config = {
   DB_NAME,
   ACCESS_TOKEN_SECRET,
   RESPONSE_TOKEN_SECRET,
+  JWKS_URI,
 };

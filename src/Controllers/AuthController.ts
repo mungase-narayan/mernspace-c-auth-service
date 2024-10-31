@@ -2,7 +2,7 @@ import { JwtPayload } from "jsonwebtoken";
 import { NextFunction, Response } from "express";
 import { validationResult } from "express-validator";
 
-import { RegisterUser } from "../types";
+import { AuthRequest, RegisterUser } from "../types";
 import { UserService } from "../services/UserServices";
 import { TokenServices } from "../services/TokenServices";
 import createHttpError from "http-errors";
@@ -147,5 +147,13 @@ export class AuthController {
       console.log(error);
       return;
     }
+  }
+
+  async self(req: AuthRequest, res: Response) {
+    console.log("Sub in auth: ", req.auth.sub);
+    const user = await this.userService.findById(Number(req.auth.sub));
+    res
+      .status(200)
+      .json({ user: user, message: "User validation successful!" });
   }
 }
