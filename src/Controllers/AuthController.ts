@@ -150,10 +150,9 @@ export class AuthController {
   }
 
   async self(req: AuthRequest, res: Response) {
-    console.log("Sub in auth: ", req.auth.sub);
     const user = await this.userService.findById(Number(req.auth.sub));
     res
       .status(200)
-      .json({ user: user, message: "User validation successful!" });
+      .json({...user, password: undefined});
   }
 }
