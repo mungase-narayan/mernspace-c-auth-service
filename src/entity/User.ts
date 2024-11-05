@@ -1,12 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Tenant } from "./Tenant";
 
-@Entity({name: "users"})
+@Entity({ name: "users" })
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Column()
-  role: string;
 
   @Column()
   firstName: string;
@@ -20,19 +18,27 @@ export class User {
   @Column()
   password: string;
 
+  @Column()
+  role: string;
+
+  @ManyToOne(() => Tenant)
+  tenant: Tenant;
+
   constructor(
     id: number,
-    role: string,
     firstName: string,
     lastName: string,
     email: string,
     password: string,
+    role: string,
+    tenant: Tenant,
   ) {
     this.id = id;
-    this.role = role;
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.password = password;
+    this.role = role;
+    this.tenant = tenant;
   }
 }
