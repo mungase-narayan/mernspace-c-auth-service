@@ -61,4 +61,12 @@ router.get(
     tenantController.getOne(req, res, next) as unknown as RequestHandler,
 );
 
+router.delete(
+  "/:id",
+  authenticate as RequestHandler,
+  canAccess([Roles.ADMIN]),
+  (req, res, next) =>
+    tenantController.destroy(req, res, next) as unknown as RequestHandler,
+);
+
 export default router;
