@@ -16,7 +16,7 @@ describe("GET /auth/self", () => {
       jwks = createJWKSMock("http://localhost:5501");
       connection = await AppDataSource.initialize();
     } catch (error) {
-      console.error("Error during Database connection for test", error);
+      console.error("Error during Database connection in test", error);
       throw error;
     }
   });
