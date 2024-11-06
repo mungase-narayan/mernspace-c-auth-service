@@ -30,4 +30,8 @@ export class TenantService {
       .getManyAndCount();
     return result;
   }
+
+  async getById(tenantId: number) {
+    return await this.tenantRepository.findOne({ where: { id: tenantId } });
+  }
 }
