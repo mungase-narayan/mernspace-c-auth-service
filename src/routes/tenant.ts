@@ -53,4 +53,12 @@ router.get(
     tenantController.getAll(req, res, next) as unknown as RequestHandler,
 );
 
+router.get(
+  "/getOne/:id",
+  authenticate as RequestHandler,
+  canAccess([Roles.ADMIN]),
+  (req: Request, res: Response, next: NextFunction) =>
+    tenantController.getOne(req, res, next) as unknown as RequestHandler,
+);
+
 export default router;
