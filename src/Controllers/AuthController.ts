@@ -57,7 +57,7 @@ export class AuthController {
       res.cookie("accessToken", accessToken, {
         domain: "localhost",
         sameSite: "strict",
-        maxAge: 1000 * 60 * 60, //1hrs
+        maxAge: 1000 * 60 * 60 * 24 * 1, //1day
         httpOnly: true, //Very Important
       });
 
@@ -124,7 +124,7 @@ export class AuthController {
       res.cookie("accessToken", accessToken, {
         domain: "localhost",
         sameSite: "strict",
-        maxAge: 1000 * 60 * 60, //1hrs
+        maxAge: 1000 * 60 * 60 * 24 * 1, // 1d
         httpOnly: true, //Very Important
       });
 
@@ -187,7 +187,7 @@ export class AuthController {
       res.cookie("accessToken", accessToken, {
         domain: "localhost",
         sameSite: "strict",
-        maxAge: 1000 * 60 * 60, //1hrs
+        maxAge: 1000 * 60 * 60 * 24 * 1, // 1d
         httpOnly: true, //Very Important
       });
 
