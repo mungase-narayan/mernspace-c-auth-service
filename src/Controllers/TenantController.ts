@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { TenantService } from "../services/TenantService";
-import { CreateTenantRequest } from "../types";
+import { CreateTenantRequest, TenantQueryParams } from "../types";
 import { Logger } from "winston";
 import { matchedData, validationResult } from "express-validator";
 import createHttpError from "http-errors";
@@ -64,6 +64,27 @@ export default class {
         id: Number(tenantId),
         message: "Tenant has been updated successfully",
       });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getAll(req: Request, res: Response, next: NextFunction) {
+    const validatedQuery = matchedData(req, { onlyValidData: true });
+    try {
+      const [tenants, count] = await this.tenantService.getAll(
+        validatedQuery as TenantQueryParams,
+      );
+
+      this.logger.info("All tenant have been fetched");
+      res.json({
+        currentPage: validatedQuery.currentPage as number,
+        perPage: validatedQuery.perPage as number,
+        total: count,
+        data: tenants,
+      });
+
+      res.json(tenants);
     } catch (err) {
       next(err);
     }
