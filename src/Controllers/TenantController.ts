@@ -112,4 +112,31 @@ export default class {
       next(err);
     }
   }
+
+  async destroy(req: Request, res: Response, next: NextFunction) {
+    const tenantId = req.params.id;
+
+    if (isNaN(Number(tenantId))) {
+      next(createHttpError(400, "Invalid url param."));
+      return;
+    }
+
+    try {
+      const tenant = await this.tenantService.findById(Number(tenantId));
+      if (!tenant) {
+        res.status(404).json({ Error: "Tenant does not exist." });
+        next(createHttpError(400, "Tenant does not exist."));
+        return;
+      }
+
+      await this.tenantService.deleteById(Number(tenantId));
+
+      this.logger.info("Tenant has been deleted", {
+        id: Number(tenantId),
+      });
+      res.json({ id: Number(tenantId), message: "Tenant has been deleted" });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
