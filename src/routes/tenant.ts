@@ -1,4 +1,9 @@
-import express, { Response, NextFunction, RequestHandler } from "express";
+import express, {
+  Request,
+  Response,
+  NextFunction,
+  RequestHandler,
+} from "express";
 
 import authenticate from "../middlewares/authenticate";
 import { canAccess } from "../middlewares/canAccess";
@@ -14,6 +19,7 @@ import { Roles } from "../constants";
 import { CreateTenantRequest } from "../types";
 
 import tenantValidator from "../validators/tenant-validator";
+import listUsersValidator from "../validators/list-users-validator";
 
 const router = express.Router();
 
@@ -38,6 +44,13 @@ router.patch(
   tenantValidator,
   (req: CreateTenantRequest, res: Response, next: NextFunction) =>
     tenantController.update(req, res, next) as unknown as RequestHandler,
+);
+
+router.get(
+  "/getList",
+  listUsersValidator,
+  (req: Request, res: Response, next: NextFunction) =>
+    tenantController.getAll(req, res, next) as unknown as RequestHandler,
 );
 
 export default router;
