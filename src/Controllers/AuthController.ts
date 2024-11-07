@@ -28,13 +28,14 @@ export class AuthController {
       res.status(400).json({ Error: "All fields are required" });
       return;
     }
-    const user = await this.userService.findByEmail(email);
-    if (user) {
-      res.status(400).json({ Error: "Email is already registered" });
-      return;
-    }
+
     try {
-      const user = await this.userService.create({
+      const user = await this.userService.findByEmail(email);
+      if (user) {
+        res.status(400).json({ Error: "Email is already registered" });
+        return;
+      }
+      const newUser = await this.userService.create({
         role,
         firstName,
         lastName,
@@ -42,12 +43,16 @@ export class AuthController {
         password,
       });
       // Generate JWT tokens
-      const payload: JwtPayload = { sub: String(user.id), role: user.role };
+      const payload: JwtPayload = {
+        sub: String(newUser.id),
+        role: newUser.role,
+      };
 
       const accessToken = this.tokenService.generateAccessToken(payload);
 
       //Persist the refresh token
-      const newRefreshToken = await this.tokenService.persistRefreshToken(user);
+      const newRefreshToken =
+        await this.tokenService.persistRefreshToken(newUser);
 
       const refreshToken = this.tokenService.generateRefreshToken({
         ...payload,
@@ -69,7 +74,7 @@ export class AuthController {
       });
       res
         .status(201)
-        .json({ id: user.id, message: "User registration successfully" });
+        .json({ id: newUser.id, message: "User registration successfully" });
     } catch (error) {
       next(error);
       console.log(error);
@@ -217,7 +222,9 @@ export class AuthController {
 
       res.clearCookie("accessToken");
       res.clearCookie("refreshToken");
-      res.json({});
+      res
+        .status(200)
+        .json({ id: req.auth.sub, message: "User has been logged out" });
     } catch (err) {
       next(err);
       return;
