@@ -1,11 +1,12 @@
 import { Request } from "express";
 
 export interface UserData {
-  role: string;
   firstName: string;
   lastName: string;
   email: string;
   password: string;
+  role: string;
+  tenantId?: number;
 }
 
 export interface RegisterUser extends Request {
@@ -42,4 +43,8 @@ export interface TenantQueryParams {
   q: string;
   perPage: number;
   currentPage: number;
+}
+
+export interface CreateUserRequest extends Request {
+  body: UserData;
 }
