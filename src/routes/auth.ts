@@ -30,14 +30,14 @@ const authController = new AuthController(
 );
 
 router.post(
-  "/registerUser",
+  "/register",
   registerValidator,
   (req: Request, res: Response, next: NextFunction) =>
     authController.register(req, res, next),
 );
 
 router.post(
-  "/loginUser",
+  "/login",
   loginValidator,
   (req: Request, res: Response, next: NextFunction) =>
     authController.login(req, res, next),
@@ -55,7 +55,7 @@ router.post(
 );
 
 router.post(
-  "/logoutUser",
+  "/logout",
   authenticate,
   parseRefreshToken,
   (req: Request, res: Response, next: NextFunction) =>
