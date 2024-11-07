@@ -8,35 +8,38 @@ export class UserService {
   constructor(private userRepository: Repository<User>) {}
 
   async create({
-    role,
     firstName,
     lastName,
     email,
     password,
-  }: UserData): Promise<User> {
+    role,
+    tenantId,
+  }: UserData) {
+    const user = await this.userRepository.findOne({
+      where: { email: email },
+    });
+    if (user) {
+      const err = createHttpError(400, "Email is already exists!");
+      throw err;
+    }
+    // Hash the password
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
     try {
-      // Ensure password exists
-      if (!password) {
-        throw createHttpError(400, "Password is required");
-      }
-
-      // Hash the password
-      const saltRounds = 10;
-      const hashPassword = await bcrypt.hash(password, saltRounds);
-
-      // Create user object
       return await this.userRepository.save({
-        role,
         firstName,
         lastName,
         email,
-        password: hashPassword,
+        password: hashedPassword,
+        role,
+        tenant: tenantId ? { id: tenantId } : undefined,
       });
-
-      // Save the user in the repository
     } catch (err) {
-      console.log("Error saving user", err);
-      throw createHttpError(500, "Failed to save user in repository");
+      const error = createHttpError(
+        500,
+        "Failed to store the data in the database",
+      );
+      throw error;
     }
   }
 
