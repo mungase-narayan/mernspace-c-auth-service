@@ -30,7 +30,7 @@ export class AuthController {
     }
 
     try {
-      const user = await this.userService.findByEmail(email);
+      const user = await this.userService.findByEmailWithPassword(email);
       if (user) {
         res.status(400).json({ Error: "Email is already registered" });
         return;
@@ -96,7 +96,7 @@ export class AuthController {
     }
 
     try {
-      const user = await this.userService.findByEmail(email);
+      const user = await this.userService.findByEmailWithPassword(email);
       if (!user) {
         res.status(401).json({ Error: "Invalid email or password" });
         const error = createHttpError(401, "Invalid email or password");
