@@ -3,6 +3,7 @@ import { Brackets, Repository } from "typeorm";
 import createHttpError from "http-errors";
 import { User } from "../entity/User";
 import { LimitedUserData, UserData, UserQueryParams } from "../types";
+import { selectFields } from "express-validator/lib/field-selection";
 
 export class UserService {
   constructor(private userRepository: Repository<User>) {}
@@ -43,9 +44,16 @@ export class UserService {
     }
   }
 
-  async findByEmail(email: string) {
-    const user = await this.userRepository.findOne({ where: { email } });
-    return user;
+  async findByEmailWithPassword(email: string) {
+    return await this.userRepository.findOne({
+      where: {
+        email,
+      },
+      select: ["id", "firstName", "lastName", "email", "role", "password"],
+      relations: {
+        tenant: true,
+      },
+    });
   }
 
   async findById(id: number) {

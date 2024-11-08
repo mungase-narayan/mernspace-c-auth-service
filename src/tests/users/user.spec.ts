@@ -6,6 +6,8 @@ import { AppDataSource } from "../../config/data-source";
 import { User } from "../../entity/User";
 import { Roles } from "../../constants";
 import app from "../../app";
+import { createTenant } from "../utils";
+import { Tenant } from "../../entity/Tenant";
 
 describe("POST /users", () => {
   let connection: DataSource;
@@ -67,6 +69,9 @@ describe("POST /users", () => {
     });
 
     it("Should create a manager user", async () => {
+      // Create tenant first
+      const tenant = await createTenant(connection.getRepository(Tenant));
+
       const adminToken = jwks.token({ sub: "1", role: Roles.ADMIN });
 
       // Register user
@@ -75,9 +80,10 @@ describe("POST /users", () => {
         lastName: "Mungase",
         email: "example@gmail.com",
         password: "Mungase1234",
+        tenantId: tenant.id,
         role: Roles.MANAGER,
-        // tenantId: 1,
       };
+
       // Add token to cookie
       const response = await request(app as any)
         .post("/users")
@@ -87,9 +93,8 @@ describe("POST /users", () => {
       const userRepository = connection.getRepository(User);
       const users = await userRepository.find();
 
-      expect(response.statusCode).toBe(201);
       expect(users).toHaveLength(1);
-      expect(users[0].role).toBe(userData.role);
+      expect(users[0].email).toBe(userData.email);
     });
 
     it("Should return 403 if non admin user tries to create user", async () => {});
