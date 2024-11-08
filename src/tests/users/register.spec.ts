@@ -395,12 +395,16 @@ describe("POST /auth/register", () => {
     });
 
     //Incomplete test
-    it("Should return 400 status code if email is not a valid email", async () => {});
+    it.todo("Should return 400 status code if email is not a valid email");
 
     //Incomplete test
-    it("Should return 400 status code if firstName, lastName, or password contain special characters", async () => {});
+    it.todo(
+      "Should return 400 status code if firstName, lastName, or password contain special characters",
+    );
 
     //Incomplete test
-    it("Should return 400 status code if password length is less than 8 characters", async () => {});
+    it.todo(
+      "Should return 400 status code if password length is less than 8 characters",
+    );
   });
 });
