@@ -15,6 +15,7 @@ const {
   ACCESS_TOKEN_SECRET,
   RESPONSE_TOKEN_SECRET,
   JWKS_URI,
+  PRIVATE_KEY,
 } = process.env;
 
 export const Config = {
@@ -28,4 +29,5 @@ export const Config = {
   ACCESS_TOKEN_SECRET,
   RESPONSE_TOKEN_SECRET,
   JWKS_URI,
+  PRIVATE_KEY,
 };
