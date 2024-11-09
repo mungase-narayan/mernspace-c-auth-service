@@ -203,8 +203,8 @@ describe("POST /auth/register", () => {
         ["set-cookie"]: string[];
       }
 
-      let accessToken = null;
-      let refreshToken = null;
+      let accessToken = "";
+      let refreshToken = "";
       const cookies =
         (response.headers as unknown as Headers)["set-cookie"] || [];
       cookies.forEach((cookie) => {
