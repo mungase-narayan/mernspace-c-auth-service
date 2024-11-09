@@ -1,6 +1,3 @@
-import fs from "fs";
-import path from "path";
-
 import { JwtPayload, sign } from "jsonwebtoken";
 import createHttpError from "http-errors";
 import { Repository } from "typeorm";
@@ -12,12 +9,17 @@ import { User } from "../entity/User";
 export class TokenServices {
   constructor(private refreshTokenRepository: Repository<RefreshToken>) {}
   generateAccessToken(payload: JwtPayload) {
-    let privateKey: Buffer;
+    let privateKey: string;
+    if (!Config.PRIVATE_KEY) {
+      const error = createHttpError(
+        500,
+        "Private key is not set in environment variables",
+      );
+      throw error;
+    }
 
     try {
-      privateKey = fs.readFileSync(
-        path.join(__dirname, "../../certs/private.pem"),
-      );
+      privateKey = Config.PRIVATE_KEY;
     } catch (err) {
       const error = createHttpError(500, "Error while reading private key");
       throw error;
