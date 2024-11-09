@@ -1,5 +1,5 @@
 import { JwtPayload } from "jsonwebtoken";
-import { NextFunction, Response, Request } from "express";
+import { NextFunction, Response } from "express";
 import { validationResult } from "express-validator";
 
 import { AuthRequest, RegisterUser } from "../types";
@@ -11,7 +11,7 @@ import logger from "../config/logger";
 
 export class AuthController {
   constructor(
-    private userService: UserService,
+    private userService: UserService, //add readonly after private
     private tokenService: TokenServices,
     private credentialService: CredentialService,
   ) {}
