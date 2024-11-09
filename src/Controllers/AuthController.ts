@@ -11,9 +11,9 @@ import logger from "../config/logger";
 
 export class AuthController {
   constructor(
-    private userService: UserService, //add readonly after private
-    private tokenService: TokenServices,
-    private credentialService: CredentialService,
+    private readonly userService: UserService, //add readonly after private
+    private readonly tokenService: TokenServices,
+    private readonly credentialService: CredentialService,
   ) {}
 
   async register(req: RegisterUser, res: Response, next: NextFunction) {
