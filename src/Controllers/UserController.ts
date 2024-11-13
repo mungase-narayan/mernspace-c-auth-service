@@ -12,8 +12,8 @@ import {
 
 export class UserController {
   constructor(
-    private userService: UserService,
-    private logger: Logger,
+    private readonly userService: UserService,
+    private readonly logger: Logger,
   ) {}
 
   async createUser(req: CreateUserRequest, res: Response, next: NextFunction) {

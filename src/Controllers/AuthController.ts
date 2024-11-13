@@ -11,7 +11,7 @@ import logger from "../config/logger";
 
 export class AuthController {
   constructor(
-    private readonly userService: UserService, //add readonly after private
+    private readonly userService: UserService,
     private readonly tokenService: TokenServices,
     private readonly credentialService: CredentialService,
   ) {}

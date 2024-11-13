@@ -3,10 +3,9 @@ import { Brackets, Repository } from "typeorm";
 import createHttpError from "http-errors";
 import { User } from "../entity/User";
 import { LimitedUserData, UserData, UserQueryParams } from "../types";
-import { selectFields } from "express-validator/lib/field-selection";
 
 export class UserService {
-  constructor(private userRepository: Repository<User>) {}
+  constructor(private readonly userRepository: Repository<User>) {}
 
   async create({
     firstName,
