@@ -7,7 +7,7 @@ import { RefreshToken } from "../entity/RefreshToken";
 import { User } from "../entity/User";
 
 export class TokenServices {
-  constructor(private refreshTokenRepository: Repository<RefreshToken>) {}
+  constructor(private readonly refreshTokenRepository: Repository<RefreshToken>) {}
   generateAccessToken(payload: JwtPayload) {
     let privateKey: string;
 
