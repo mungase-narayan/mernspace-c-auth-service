@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { Brackets, Repository } from "typeorm";
 import createHttpError from "http-errors";
 import { User } from "../entity/User";
