@@ -15,6 +15,7 @@ const {
   RESPONSE_TOKEN_SECRET,
   JWKS_URI,
   PRIVATE_KEY,
+  FRONTEND_URI
 } = process.env;
 
 export const Config = {
@@ -28,4 +29,5 @@ export const Config = {
   RESPONSE_TOKEN_SECRET,
   JWKS_URI,
   PRIVATE_KEY,
+  FRONTEND_URI
 };
