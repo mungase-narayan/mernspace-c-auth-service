@@ -145,6 +145,7 @@ export class AuthController {
         accessToken: accessToken,
         refreshToken: refreshToken,
         message: "Login successful!",
+        id: user.id,
       });
       return;
     } catch (error) {
