@@ -145,6 +145,7 @@ export class AuthController {
         accessToken: accessToken,
         refreshToken: refreshToken,
         message: "Login successful!",
+        id: user.id,
       });
       return;
     } catch (error) {
@@ -155,8 +156,24 @@ export class AuthController {
   }
 
   async self(req: AuthRequest, res: Response) {
-    const user = await this.userService.findById(Number(req.auth.sub));
-    res.status(200).json({ ...user, password: undefined });
+    try {
+      if (!req.auth || !req.auth.sub) {
+        return res
+          .status(400)
+          .json({ message: "User ID is missing in auth data." });
+      }
+
+      const user = await this.userService.findById(Number(req.auth.sub));
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found." });
+      }
+
+      res.status(200).json({ ...user, password: undefined });
+    } catch (error) {
+      console.error("Error in self method:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
   }
 
   async refresh(req: AuthRequest, res: Response, next: NextFunction) {
