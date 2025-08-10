@@ -140,7 +140,7 @@ export class AuthController {
         httpOnly: true, //Very Important
       });
 
-      logger.info("Login successful!");
+      logger.info({ msg: "Login successful!", data: { userId: user.id } });
       res.status(201).json({
         accessToken: accessToken,
         refreshToken: refreshToken,
@@ -204,7 +204,10 @@ export class AuthController {
         httpOnly: true, //Very Important
       });
 
-      logger.info("User has been logged in", { id: user.id });
+      logger.info({
+        msg: "User has been logged in",
+        data: { userId: user.id },
+      });
       res.json({ id: user.id });
     } catch (error) {
       next(error);
@@ -216,10 +219,11 @@ export class AuthController {
   async logout(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       await this.tokenService.deleteRefreshToken(Number(req.auth.id));
-      logger.info("Refresh token has been deleted", {
-        id: req.auth.id,
+      logger.info({
+        msg: "Refresh token has been deleted",
+        userId: req.auth.id,
       });
-      logger.info("User has been logged out", { id: req.auth.sub });
+      logger.info({ msg: "User has been logged out", userId: req.auth.sub });
 
       res.clearCookie("accessToken");
       res.clearCookie("refreshToken");

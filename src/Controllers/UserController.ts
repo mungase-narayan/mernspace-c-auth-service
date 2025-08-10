@@ -58,7 +58,10 @@ export class UserController {
 
     console.log("User ID: ", isNaN(Number(userId)));
 
-    this.logger.debug("Request for updating a user", req.body);
+    this.logger.debug({
+      msg: "Request for updating a user",
+      data: { userId: userId, firstName: firstName, email: email },
+    });
 
     try {
       await this.userService.update(Number(userId), {
@@ -69,7 +72,10 @@ export class UserController {
         tenantId,
       });
 
-      this.logger.info("User has been updated", { id: userId });
+      this.logger.info({
+        msg: "User has been updated",
+        data: { userId: userId },
+      });
 
       res.json({ id: Number(userId), message: "User has been updated" });
     } catch (err) {
@@ -85,7 +91,7 @@ export class UserController {
         validatedQuery as UserQueryParams,
       );
 
-      this.logger.info("All users have been fetched");
+      this.logger.info({ msg: "All users have been fetched" });
       res.json({
         currentPage: validatedQuery.currentPage as number,
         perPage: validatedQuery.perPage as number,
@@ -113,7 +119,10 @@ export class UserController {
         return;
       }
 
-      this.logger.info("User has been fetched", { id: user.id });
+      this.logger.info({
+        msg: "User has been fetched",
+        data: { userId: user.id },
+      });
       res.json(user);
     } catch (err) {
       next(err);
@@ -131,8 +140,9 @@ export class UserController {
     try {
       await this.userService.deleteById(Number(userId));
 
-      this.logger.info("User has been deleted", {
-        id: Number(userId),
+      this.logger.info({
+        msg: "User has been deleted",
+        data: { userId: Number(userId) },
       });
       res.json({ id: Number(userId) });
     } catch (err) {

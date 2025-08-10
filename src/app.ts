@@ -31,7 +31,7 @@ app.use("/tenants", tenantRouter);
 app.use("/users", userRouter);
 
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
-  logger.error(err.message);
+  logger.error({ msg: err.message });
   const statusCode = err.statusCode || err.status || 500;
   res.status(statusCode).json({
     errors: [
