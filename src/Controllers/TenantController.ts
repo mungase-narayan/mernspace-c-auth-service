@@ -19,11 +19,17 @@ export default class {
     }
 
     const { name, address } = req.body;
-    this.logger.debug("Request for creating a new tenant", req.body);
+    this.logger.debug({
+      msg: "Request for creating a new tenant",
+      data: { name: name, address: address },
+    });
 
     try {
       const tenant = await this.tenantService.create({ name, address });
-      this.logger.info("Tenant has been created", { id: tenant.id });
+      this.logger.info({
+        msg: "Tenant has been created",
+        data: { tenantId: tenant.id },
+      });
 
       res.status(201).json({
         id: tenant.id,
@@ -50,7 +56,10 @@ export default class {
       return;
     }
 
-    this.logger.debug("Request for updating a tenant", req.body);
+    this.logger.debug({
+      msg: "Request for updating a tenant",
+      data: { tenantId: tenantId },
+    });
 
     try {
       await this.tenantService.update(Number(tenantId), {
@@ -58,7 +67,10 @@ export default class {
         address,
       });
 
-      this.logger.info("Tenant has been updated", { id: tenantId });
+      this.logger.info({
+        msg: "Tenant has been updated",
+        data: { tenantId: tenantId },
+      });
 
       res.json({
         id: Number(tenantId),
@@ -76,7 +88,7 @@ export default class {
         validatedQuery as TenantQueryParams,
       );
 
-      this.logger.info("All tenant have been fetched");
+      this.logger.info({ msg: "All tenant have been fetched" });
       res.json({
         currentPage: validatedQuery.currentPage as number,
         perPage: validatedQuery.perPage as number,
@@ -106,7 +118,7 @@ export default class {
         return;
       }
 
-      this.logger.info("Tenant has been fetched");
+      this.logger.info({ msg: "Tenant has been fetched" });
       res.json(tenant);
     } catch (err) {
       next(err);
@@ -131,8 +143,9 @@ export default class {
 
       await this.tenantService.deleteById(Number(tenantId));
 
-      this.logger.info("Tenant has been deleted", {
-        id: Number(tenantId),
+      this.logger.info({
+        msg: "Tenant has been deleted",
+        data: { tenantId: Number(tenantId) },
       });
       res.json({ id: Number(tenantId), message: "Tenant has been deleted" });
     } catch (err) {
